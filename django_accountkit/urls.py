@@ -15,7 +15,10 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+from accountkitlogin.views import *
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^$', login_view, name='login-view'),
+    url(r'^success$', success, name='success-view')
 ]
