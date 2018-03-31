@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 import json, requests
 from django.conf import settings
+from django.core.signing import TimestampSigner, SignatureExpired, BadSignature
 
 api_version = getattr(settings, 'ACCOUNT_KIT_VERSION')
 accountkit_secret = getattr(settings, 'ACCOUNT_KIT_APP_SECRET')
@@ -12,9 +13,17 @@ accountkit_app_id = getattr(settings, 'APP_ID')
 
 @csrf_exempt
 def success(request):
-	code = request.POST.get('code')
-	csrf = request.POST.get('csrf')
+	signer = TimestampSigner()
+	code = request.GET.get('code')
+	state = request.GET.get('state')
+	try:
+		state = signer.unsign(state, max_age=1800)
+	except SignatureExpired:
+		print("Expiration detected!")
+	except BadSignature:
+		print("Tampering detected!")
 
+	print state
 	#Exchange authorization code for access token
 	token_url = 'https://graph.accountkit.com/%s/access_token' % api_version
 	params = {'grant_type': 'authorization_code',
