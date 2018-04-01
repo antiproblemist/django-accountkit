@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 import json, requests
 from django.conf import settings
-from django.core.signing import Signer, BadSignature
+from django.core.signing import TimestampSigner, BadSignature
 from django.core.exceptions import PermissionDenied
 
 
@@ -15,7 +15,7 @@ accountkit_app_id = getattr(settings, 'APP_ID')
 
 @csrf_exempt
 def success(request):
-	signer = Signer()
+	signer = TimestampSigner()
 	code = request.GET.get('code') if request.GET.get('code', None) else request.POST.get('code', None)
 	state = request.GET.get('state') if request.GET.get('state', None) else request.POST.get('state', None)
 	print state

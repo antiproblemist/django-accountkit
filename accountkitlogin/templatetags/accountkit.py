@@ -3,7 +3,7 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.conf import settings
 from django.contrib import messages
-from django.core.signing import Signer
+from django.core.signing import TimestampSigner
 
 
 register = Library()
@@ -15,7 +15,7 @@ accountkit_redirect = getattr(settings, 'ACCOUNT_KIT_SUCCESS_REDIRECT')
 
 @register.simple_tag()
 def accountkitjs():
-	signer = Signer()
+	signer = TimestampSigner()
 	state = signer.sign(accountkit_app_id)
 	html = "<script src='https://sdk.accountkit.com/en_US/sdk.js'></script><script>AccountKit_OnInteractive=function(){AccountKit.init({appId:'%s',state:'%s',version:'%s',redirect:'%s',fbAppEventsEnabled:!0})};function loginCallback(response){var code=response.code;var state=response.state;document.getElementById('code').value=code;document.getElementById('state').value=state;document.getElementById('login').submit();} function smsLogin(){AccountKit.login('PHONE',{countryCode:'+1',phoneNumber:''},loginCallback)} function emailLogin(){AccountKit.login('EMAIL',{emailAddress:''},loginCallback)}" % (accountkit_app_id, state, api_version, accountkit_redirect)
 	return mark_safe(html)
