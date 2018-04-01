@@ -9,9 +9,6 @@ services: postgresql
 env:
   - DJANGO=1.11
 
-before_install:
-  - export DJANGO_SETTINGS_MODULE=django-accountkit.settings
-
 install:
   - pip install -r requirements.txt
 
