@@ -17,5 +17,20 @@ accountkit_redirect = getattr(settings, 'ACCOUNT_KIT_SUCCESS_REDIRECT')
 def accountkitjs():
 	signer = Signer()
 	state = signer.sign(accountkit_app_id)
-	html = "<script src='https://sdk.accountkit.com/en_US/sdk.js'></script><script>AccountKit_OnInteractive=function(){AccountKit.init({appId:'%s',state:'%s',version:'%s',redirect:'%s',fbAppEventsEnabled:!0})};function loginCallback(response){if(response.status==='PARTIALLY_AUTHENTICATED'){var code=response.code;var csrf=response.state;document.getElementById('code').value=code;document.getElementById('csrf').value=csrf;document.getElementById('login_success').submit()} else if(response.status==='NOT_AUTHENTICATED'){document.getElementById('message').innerText='Not Authenticated'} else if(response.status==='BAD_PARAMS'){document.getElementById('message').innerText='Bad Params'}}function smsLogin(){AccountKit.login('PHONE',{countryCode:'+1',phoneNumber:''},loginCallback)} function emailLogin(){AccountKit.login('EMAIL',{emailAddress:''},loginCallback)}" % (accountkit_app_id, state, api_version, accountkit_redirect)
+	html = "<script src='https://sdk.accountkit.com/en_US/sdk.js'></script><script>AccountKit_OnInteractive=function(){AccountKit.init({appId:'%s',state:'%s',version:'%s',redirect:'%s',fbAppEventsEnabled:!0})};function loginCallback(response){var code=response.code;var state=response.state;document.getElementById('code').value=code;document.getElementById('state').value=state;document.getElementById('login').submit();} function smsLogin(){AccountKit.login('PHONE',{countryCode:'+1',phoneNumber:''},loginCallback)} function emailLogin(){AccountKit.login('EMAIL',{emailAddress:''},loginCallback)}" % (accountkit_app_id, state, api_version, accountkit_redirect)
 	return mark_safe(html)
+
+@register.simple_tag()
+def accountkitform():
+	html = "<form id='login' method='post' action='%s'><input id='state' type='hidden' name='state'/><input id='code' type='hidden' name='code'/></form>" % accountkit_redirect
+	return format_html(html)
+
+@register.simple_tag()
+def smslogin(className="btn btn-outline-primary btn-block", text="Sign-in via SMS"):
+	html = "<button onclick='smsLogin();' class='%s'>%s</button>" % (className, text)
+	return format_html(html)
+
+@register.simple_tag()
+def emaillogin(className="btn btn-outline-primary btn-block", text="Sign-in via Email"):
+	html = "<button onclick='emailLogin();' class='%s'>%s</button>" % (className, text)
+	return format_html(html)
