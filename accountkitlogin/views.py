@@ -17,28 +17,42 @@ accountkit_app_id = getattr(settings, 'APP_ID')
 
 @csrf_exempt
 def login_status(request):
-	signer = TimestampSigner()
+	
 	code = request.GET.get('code') if request.GET.get('code', None) else request.POST.get('code', None)
 	state = request.GET.get('state') if request.GET.get('state', None) else request.POST.get('state', None)
+	status = request.GET.get('status') if request.GET.get('status', None) else request.POST.get('status', None)
+	context = {}
+
+	if status != "PARTIALLY_AUTHENTICATED ":
+		context['authenticated'] = False
+		context['message'] = "Accountkit could not authenticate the user"
+		context['user'] = None
+		return context
 
 	try:
-		app_id_from_state = signer.unsign(state)
+		signer = TimestampSigner()
+		csrf = signer.unsign(state)
 	except BadSignature:
-		raise PermissionDenied
-
-	if app_id_from_state != accountkit_app_id:
-		raise PermissionDenied
+		context['authenticated'] = False
+		context['message'] = "Invalid request"
+		context['user'] = None
+		return context
 
 	#Exchange authorization code for access token
 	token_url = 'https://graph.accountkit.com/%s/access_token' % api_version
-	params = {'grant_type': 'authorization_code',
-				'code': code,
+	params = {'grant_type': 'authorization_code', 'code': code,
 				'access_token': 'AA|%s|%s' % (accountkit_app_id, accountkit_secret)
 			}
 
 	res = requests.get(token_url, params=params)
 	token_response = res.json()
-	
+
+	if 'error' in token_response:
+		context['authenticated'] = False
+		context['message'] = "This authorization code has been used."
+		context['user'] = None
+		return context
+
 	user_id = token_response.get('id')
 	user_access_token = token_response.get('access_token')
 	refresh_interval = token_response.get('token_refresh_interval_sec')
@@ -50,19 +64,44 @@ def login_status(request):
 	res = requests.get(identity_url, params=identity_params)
 	identity_response = res.json()
 
-	user = None
-	if 'email' in identity_response:
-		email = identity_response['email']['address']
-		user = authenticate(request, username=email, email=email)
-	elif 'phone' in identity_response:
-		phone = identity_response['phone']['number']
-		user = authenticate(request, username=phone)
-	else:
-		pass
+	if 'error' in identity_response:
+		context['authenticated'] = False
+		context['message'] = identity_response['error']['message']
+		context['user'] = None
+		return context
+	elif identity_response['application']['id'] != accountkit_app_id:
+		context['authenticated'] = False
+		context['message'] = "The application id returned does not match the one in your settings"
+		context['user'] = None
+		return context
 
-	login(request, user)
+	user = None
+	username = None
+	if 'email' in identity_response:
+		username = identity_response['email']['address']
+		user = authenticate(request, username=username, email=username)
+	elif 'phone' in identity_response:
+		username = identity_response['phone']['number']
+		user = authenticate(request, username=username)
 	
-	return HttpResponseRedirect('/') #return user instead
+	if not user:
+		context['authenticated'] = False
+		context['message'] = "Please check if the user with username %s is active" % username
+		context['user'] = None
+		return context
+	
+	if not request.user.is_authenticated:
+		login(request, user)
+		context['authenticated'] = True
+		context['message'] = "User with username %s logged in" % username
+		context['user'] = user
+		return context
+	else:
+		login(request, user)
+		context['authenticated'] = True
+		context['message'] = "User with username %s logged in" % username
+		context['user'] = user
+		return context
 	
 
 def login_view(request):
