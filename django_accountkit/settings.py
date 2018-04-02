@@ -101,7 +101,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTHENTICATION_BACKENDS = (
-    'accountkitlogin.authenticate.authentication',
+    'accountkitlogin.authenticate.GetOrCreateUser',
 )
 
 
