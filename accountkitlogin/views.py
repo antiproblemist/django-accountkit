@@ -15,15 +15,20 @@ api_version = getattr(settings, 'ACCOUNT_KIT_VERSION')
 accountkit_secret = getattr(settings, 'ACCOUNT_KIT_APP_SECRET')
 accountkit_app_id = getattr(settings, 'APP_ID')
 
-@csrf_exempt
 def login_status(request):
-	
+
 	code = request.GET.get('code') if request.GET.get('code', None) else request.POST.get('code', None)
 	state = request.GET.get('state') if request.GET.get('state', None) else request.POST.get('state', None)
 	status = request.GET.get('status') if request.GET.get('status', None) else request.POST.get('status', None)
 	context = {}
 
-	if status != "PARTIALLY_AUTHENTICATED ":
+	if request.user.is_authenticated:
+		context['authenticated'] = True
+		context['message'] = "User with username %s is already logged in" % request.user.username
+		context['user'] = request.user
+		return context
+
+	if status != "PARTIALLY_AUTHENTICATED":
 		context['authenticated'] = False
 		context['message'] = "Accountkit could not authenticate the user"
 		context['user'] = None
@@ -90,24 +95,18 @@ def login_status(request):
 		context['user'] = None
 		return context
 	
-	if not request.user.is_authenticated:
-		login(request, user)
-		context['authenticated'] = True
-		context['message'] = "User with username %s logged in" % username
-		context['user'] = user
-		return context
-	else:
-		login(request, user)
-		context['authenticated'] = True
-		context['message'] = "User with username %s logged in" % username
-		context['user'] = user
-		return context
-	
+	login(request, user)
+	context['authenticated'] = True
+	context['message'] = "User with username %s logged in" % username
+	context['user'] = user
+	return context
+
+
+@csrf_exempt
+def success_page(request):
+	context = login_status(request)
+	return render(request, 'success.html', context)
 
 def login_view(request):
 	context = {}
-
-	context['api_version'] = api_version
-	context['accountkit_secret'] = accountkit_secret
-	context['accountkit_app_id'] = accountkit_app_id
 	return render(request, 'index.html', context)

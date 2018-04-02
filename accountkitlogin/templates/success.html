@@ -35,11 +35,10 @@
     <img class="mb-4" src="https://static.xx.fbcdn.net/rsrc.php/v3/ym/r/17s3EuGHeRn.png" alt="" width="72" height="72">
     <h1 class="h3 mb-3 font-weight-normal">Response parameters</h1>
     <ul class="text-left">
-        <li> User ID: {{ user_id }}</li>
-        <li> Phone Number: {{ phone_number }}</li>
-        <li> Email Address: {{ email_address }}</li>
-        <li> Access Token: <code>{{ user_access_token }}</code></li>
-        <li> Refresh Interval: {{ refresh_interval }}</li>
+        <li> User ID: {{ user.id }}</li>
+        <li> Username: {{ user.username }}</li>
+        <li> Message {{ message }}</li>
+        <li> Authenticated <code>{{ authenticated }}</code></li>
     </ul>
     <div class="row">
         <a href="/logout" class="btn btn-lg btn-outline-danger btn-block">Logout</a>
