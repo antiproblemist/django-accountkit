@@ -102,3 +102,7 @@ ENV/
 
 # Sqlite Database
 *.sqlite3
+
+#IDEs
+.vscode/
+.idea/
