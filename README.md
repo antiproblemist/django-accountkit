@@ -64,7 +64,7 @@ Add the view to your urls.py file for the success_page url which you defined in 
 
 ### Template Tags
 
-Add ``{% load accountkit %}`` at th starting of your template and add the following template tags to your file where you want to display the login buttons
+Add ``{% load accountkit %}`` at the starting of your template and add the following template tags to your file where you want to display the login buttons
 
 1) Add ``(% accountkitjs %}`` inside your ``<head></head>`` tag
 2) Add ``{% accountkitform %}`` inside your ``<body></body>`` tag
