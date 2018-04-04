@@ -21,11 +21,7 @@ If you want to know more about Facebook Accountkit, check out the following reso
 
 Installation is easy using ``pip``
 
-In release 0.1.0 you have to additionally ```pip install requests```. This will be fixed in the next release
-
-
 	pip install django-accountkit
-
 
 Then to add the Django Accountkit to your project add the app ``accountkitlogin`` to your ``INSTALLED_APPS``.
 
