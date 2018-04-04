@@ -1,14 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
 import json, requests
 from django.conf import settings
 from django.core.signing import TimestampSigner, BadSignature
-from django.core.exceptions import PermissionDenied
 from django.contrib.auth import authenticate, login 
-from django.http import HttpResponseRedirect
-
 
 
 api_version = getattr(settings, 'ACCOUNT_KIT_VERSION')
@@ -100,13 +95,3 @@ def login_status(request):
 	context['message'] = "User with username %s logged in" % username
 	context['user'] = user
 	return context
-
-
-@csrf_exempt
-def success_page(request):
-	context = login_status(request)
-	return render(request, 'success.html', context)
-
-def login_view(request):
-	context = {}
-	return render(request, 'index.html', context)
