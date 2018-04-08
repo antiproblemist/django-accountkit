@@ -23,7 +23,7 @@ Installation is easy using ``pip``
 
 	pip install django-accountkit
 
-Then to add the Django Accountkit to your project add the app ``accountkitlogin`` to your ``INSTALLED_APPS``.
+Then to add Django Accountkit to your project add the app ``accountkitlogin`` to your ``INSTALLED_APPS``.
 
 Now add the following settings in your settings.py file
 
@@ -52,7 +52,7 @@ Then in your view use ``login_status``
 	def success_page(request):
 		context = login_status(request)
 
-Note that csrf exempt is required because Facebook Accountkit redirect the user to your success page url and this might throw a cross origin error
+Note that csrf exempt is required because Facebook Accountkit will redirect the user to your success page url and this might throw a cross origin error
 
 The ```login_status``` function accepts the request as parameter and returns a dictionary with
 
