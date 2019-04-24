@@ -13,8 +13,8 @@ If you want to know more about Facebook Accountkit, check out the following reso
 
 ## Requirements
 
--  Python (2.7)
--  Django (1.11)
+-  Python (>= 2.7 and <= 3.7)
+-  Django (>=1.11)
 
 
 ## Installation
