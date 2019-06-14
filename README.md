@@ -1,7 +1,8 @@
 # django-accountkit
 **Using Facebook accountkit with Django https://developers.facebook.com/products/account-creation**
 
-[![PyPI version](https://badge.fury.io/py/django-accountkit.svg)](https://badge.fury.io/py/django-accountkit)
+[![PyPI version](https://badge.fury.io/py/django-accountkit.svg)](https://badge.fury.io/py/django-accountkit) [![Join the community on Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/django-accountkit)
+
 
 ## Overview
 
