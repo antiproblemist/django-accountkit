@@ -18,7 +18,7 @@ accountkit_redirect = getattr(settings, 'ACCOUNT_KIT_SUCCESS_REDIRECT')
 def accountkitjs():
 	signer = TimestampSigner()
 	state = signer.sign(accountkit_app_id)
-	html = u"<script src='https://sdk.accountkit.com/en_US/sdk.js'></script><script>AccountKit_OnInteractive=function(){AccountKit.init({appId:'%s',state:'%s',version:'%s',redirect:'%s',fbAppEventsEnabled:!0})};function loginCallback(response){var code=response.code;var state=response.state;var status=response.status;document.getElementById('code').value=code;document.getElementById('state').value=state;document.getElementById('status').value=status;document.getElementById('login').submit();} function smsLogin(){AccountKit.login('PHONE',{countryCode:'+1',phoneNumber:''},loginCallback)} function emailLogin(){AccountKit.login('EMAIL',{emailAddress:''},loginCallback)}" % (accountkit_app_id, state, api_version, accountkit_redirect)
+	html = u"<script src='https://sdk.accountkit.com/en_US/sdk.js'></script><script>AccountKit_OnInteractive=function(){AccountKit.init({appId:'%s',state:'%s',version:'%s',redirect:'%s',fbAppEventsEnabled:!0})};function loginCallback(response){var code=response.code;var state=response.state;var status=response.status;document.getElementById('code').value=code;document.getElementById('state').value=state;document.getElementById('status').value=status;document.getElementById('login').submit();} function smsLogin(){AccountKit.login('PHONE',{countryCode:'+1',phoneNumber:''},loginCallback)} function emailLogin(){AccountKit.login('EMAIL',{emailAddress:''},loginCallback)}></script>" % (accountkit_app_id, state, api_version, accountkit_redirect)
 	return mark_safe(html)
 
 @register.simple_tag()
