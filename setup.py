@@ -7,7 +7,7 @@ with open(path.join(this_directory, 'README.md')) as f:
     long_description = f.read()
 
 setup(name='django-accountkit',
-      version='0.2.1',
+      version='0.2.2',
       description='Facebook accountkit support for Django',
 	  long_description=long_description,
 	  long_description_content_type='text/markdown',
